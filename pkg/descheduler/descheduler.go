@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"os"
 	"strconv"
 	"time"
 
@@ -199,10 +200,14 @@ func (d *descheduler) runDeschedulerLoop(ctx context.Context, nodes []*v1.Node) 
 		metrics.DeschedulerLoopDuration.With(map[string]string{}).Observe(time.Since(loopStartDuration).Seconds())
 	}(time.Now())
 
-	// if len is still <= 1 error out
-	if len(nodes) <= 1 {
+	// Bypass cluster size check if DESCHEDULER_BYPASS_CLUSTER_SIZE_CHECK env var is set
+	bypass := os.Getenv("DESCHEDULER_BYPASS_CLUSTER_SIZE_CHECK") != ""
+	if len(nodes) <= 1 && !bypass {
 		klog.V(1).InfoS("The cluster size is 0 or 1 meaning eviction causes service disruption or degradation. So aborting..")
 		return fmt.Errorf("the cluster size is 0 or 1")
+	}
+	if bypass && len(nodes) <= 1 {
+		klog.Warning("Bypassing cluster size check due to DESCHEDULER_BYPASS_CLUSTER_SIZE_CHECK environment variable")
 	}
 
 	var client clientset.Interface

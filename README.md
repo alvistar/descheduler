@@ -9,6 +9,13 @@
     <img src="assets/logo/descheduler-stacked-color.png" width="40%" align="center" alt="descheduler">
 </p>
 
+<!-- Fork Notice -->
+<div align="center">
+  <h3>🚨 Fork Specific Feature 🚨</h3>
+  <p>This version includes modifications to support single-node Kubernetes clusters by setting the<br><code>DESCHEDULER_BYPASS_CLUSTER_SIZE_CHECK=true</code> environment variable.</p>
+  <p>🔐 <em>Use with caution in production environments - understand the risks of bypassing cluster size checks.</em></p>
+</div>
+
 # Descheduler for Kubernetes
 
 Scheduling in Kubernetes is the process of binding pending pods to nodes, and is performed by
